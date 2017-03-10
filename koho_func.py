@@ -15,6 +15,7 @@ emulators = [
 ]
 
 def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
+    result = 0.0
     for run_id in range(1, len(emulators)):
         emulator = emulators[run_id - 1]
         trace_dir = '../travis_extras/calibrated_emulators/%s%smbps.trace' % (emulator[0], emulator[1])
@@ -35,8 +36,9 @@ def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
         delay_match = re.match('95th percentile per-packet one-way delay: (\d+\.\d+) ms', output_lines[3])
         assert(delay_match)
         print delay_match.group(1)
-
-    result = float(result)
+        power_score = (float(throughput_match.group(1))*1000.)/ float(delay_match.group(1))
+        print "power score = %f" % power_score
+        result += power_score
 
     print 'Result = %f' % result
     #time.sleep(np.random.randint(60))
