@@ -54,4 +54,4 @@ def main(job_id, params):
     return koho_func(params['delay_window_delta'], params['delay_threshold'], params['loss_window_delta'])
 
 if __name__ == '__main__':
-    koho_func(.2, 12., 1.2)
+    koho_func(0.201780, 8.730961, 0.055665)
