@@ -16,7 +16,7 @@ emulators = [
 
 def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
     result = 0.0
-    for run_id in range(1, len(emulators)):
+    for run_id in range(1, len(emulators) + 1):
         emulator = emulators[run_id - 1]
         trace_dir = '../travis_extras/calibrated_emulators/%s%smbps.trace' % (emulator[0], emulator[1])
         extra_sender_args = '%f %f %f' % (delay_window_delta, delay_threshold, loss_window_delta)
