@@ -20,7 +20,7 @@ def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
         emulator = emulators[run_id - 1]
         trace_dir = '../travis_extras/calibrated_emulators/%s%smbps.trace' % (emulator[0], emulator[1])
         extra_sender_args = '%f %f %f' % (delay_window_delta, delay_threshold, loss_window_delta)
-        cmd = '../pantheon/test/test.py --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" --extra-sender-args "%s" --run-id %d -t 10 new_koho' % (trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], extra_sender_args, run_id)
+        cmd = '../pantheon/test/test.py --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" --extra-sender-args "%s" --run-id %d -t 30 new_koho' % (trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], extra_sender_args, run_id)
         print cmd
         call(cmd, shell=True)
         log_path = '~/pantheon/test/new_koho_datalink_run%d.log' % run_id
@@ -42,6 +42,7 @@ def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
         print "semi-normalized power score = %f" % power_score
         result += power_score
 
+    result = 100. - result
     print 'Result = %f' % result
     #time.sleep(np.random.randint(60))
     return result
