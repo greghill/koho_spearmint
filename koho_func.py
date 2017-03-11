@@ -23,8 +23,8 @@ def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
         cmd = '../pantheon/test/test.py --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" --extra-sender-args "%s" --run-id %d -t 10 new_koho' % (trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], extra_sender_args, run_id)
         print cmd
         call(cmd, shell=True)
-        log_path = '../pantheon/test/new_koho_datalink_run%d.log' % run_id
-        cmd = '../pantheon/analyze/tunnel_graph.py 500 %s' % log_path
+        log_path = '~/pantheon/test/new_koho_datalink_run%d.log' % run_id
+        cmd = '~/pantheon/analyze/tunnel_graph.py 500 %s' % log_path
         print cmd
         output = check_output(cmd, shell=True, stderr=STDOUT)
         output_lines = output.split('\n')
