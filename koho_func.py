@@ -38,6 +38,8 @@ def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
         print delay_match.group(1)
         power_score = (float(throughput_match.group(1))*1000.)/ float(delay_match.group(1))
         print "power score = %f" % power_score
+        power_score = (float(throughput_match.group(1))/float(emulator[1]))/ (float(delay_match.group(1)) / float(emulator[2]))
+        print "semi-normalized power score = %f" % power_score
         result += power_score
 
     print 'Result = %f' % result
