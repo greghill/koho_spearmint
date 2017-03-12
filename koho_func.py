@@ -1,12 +1,9 @@
 import re
+from scipy import stats
+from scipy.stats import gmean
 from subprocess import (Popen, call, check_output, STDOUT)
 
 emulators = [
-
-
-
-
-
 (       '2017-01-04T07-24-AWS-Brazil-1-to-Brazil-10-runs/',  '97.11',   '1',  '366',     '0',     '0'),
 (           '2017-01-02T03-54-India-to-AWS-India-10-runs/', '117.65',  '13',  '144',     '0',     '0'),
 (      '2016-12-30T21-38-China-ppp0-to-AWS-Korea-10-runs/',   '6.25', '152',  '362', '.0025',     '0'),
@@ -15,7 +12,7 @@ emulators = [
 ]
 
 def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
-    result = 0.0
+    scores = []
     for run_id in range(1, len(emulators) + 1):
         emulator = emulators[run_id - 1]
         trace_dir = '../travis_extras/calibrated_emulators/%s%smbps.trace' % (emulator[0], emulator[1])
@@ -40,9 +37,9 @@ def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
         print "power score = %f" % power_score
         power_score = (float(throughput_match.group(1))/float(emulator[1]))/ (float(delay_match.group(1)) / float(emulator[2]))
         print "semi-normalized power score = %f" % power_score
-        result += power_score
+        scores.append(power_score)
 
-    result = 100. - result
+    result = 0. - gmean(scores)
     print 'Result = %f' % result
     #time.sleep(np.random.randint(60))
     return result
