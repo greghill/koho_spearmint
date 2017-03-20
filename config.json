@@ -2,19 +2,30 @@
     "language"        : "PYTHON",
     "main-file"       : "koho_func.py",
     "experiment-name" : "replication",
-    "likelihood"      : "GAUSSIAN",
     "variables" : {
-        "delay_window_delta" : {
+        "up_delay_threshold" : {
+            "type" : "FLOAT",
+            "size" : 1,
+            "min"  : 1.0,
+            "max"  : 50.0
+        },
+        "up_delay_window_delta" : {
             "type" : "FLOAT",
             "size" : 1,
             "min"  : 0.05,
             "max"  : 3.0
         },
-        "delay_threshold" : {
+        "down_delay_threshold" : {
             "type" : "FLOAT",
             "size" : 1,
             "min"  : 1.0,
             "max"  : 50.0
+        },
+        "down_delay_window_delta" : {
+            "type" : "FLOAT",
+            "size" : 1,
+            "min"  : 0.05,
+            "max"  : 3.0
         },
         "loss_window_delta" : {
             "type" : "FLOAT",
@@ -22,5 +33,15 @@
             "min"  : 0.05,
             "max"  : 9.0
         }
-    }
+    },
+    "tasks": {
+        "score" : {
+            "type"            : "OBJECTIVE",
+            "likelihood"      : "GAUSSIAN"
+        },
+        "thresholds_valid" : {
+                "type"        : "CONSTRAINT",
+                "likelihood"  : "NOISELESS"
+            }
+        }
 }

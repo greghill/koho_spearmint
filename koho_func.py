@@ -11,12 +11,15 @@ emulators = [
 (           '2017-01-03T21-30-Nepal-to-AWS-India-10-runs/',  '13.38',  '32',   '37',  '.003',     '0')
 ]
 
-def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
+def koho_func(up_delay_threshold, up_delay_window_delta, down_delay_threshold, down_delay_window_delta, loss_window_delta):
+    if up_delay_threshold > down_delay_threshold:
+        return {"score" : 999, "thresholds_valid" : False}
+
     scores = []
     for run_id in range(1, len(emulators) + 1):
         emulator = emulators[run_id - 1]
         trace_dir = '../travis_extras/calibrated_emulators/%s%smbps.trace' % (emulator[0], emulator[1])
-        extra_sender_args = '%f %f %f' % (delay_window_delta, delay_threshold, loss_window_delta)
+        extra_sender_args = '%f %f %f %f %f' % (up_delay_threshold, up_delay_window_delta, down_delay_threshold, down_delay_window_delta, loss_window_delta)
         cmd = '../pantheon/test/test.py --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" --extra-sender-args "%s" --run-id %d -t 30 new_koho' % (trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], extra_sender_args, run_id)
         print cmd
         call(cmd, shell=True)
@@ -42,13 +45,14 @@ def koho_func(delay_window_delta, delay_threshold, loss_window_delta):
     result = 0. - gmean(scores)
     print 'Result = %f' % result
     #time.sleep(np.random.randint(60))
-    return result
+    return {"score" : result, "thresholds_valid" : True}
+
 
 # Write a function like this called 'main'
 def main(job_id, params):
     print 'Anything printed here will end up in the output directory for job #%d' % job_id
     print params
-    return koho_func(params['delay_window_delta'], params['delay_threshold'], params['loss_window_delta'])
+    return koho_func(params['up_delay_threshold'], params['up_delay_window_delta'], params['down_delay_threshold'], params['down_delay_window_delta'], params['loss_window_delta'])
 
 if __name__ == '__main__':
-    koho_func(0.201780, 8.730961, 0.055665)
+    koho_func(8.730961, 0.201780, 8.030961, 0.201780, 0.055665)
