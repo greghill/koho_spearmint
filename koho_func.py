@@ -12,8 +12,9 @@ emulators = [
 ]
 
 def koho_func(up_delay_threshold, up_delay_window_delta, down_delay_threshold, down_delay_window_delta, loss_window_delta):
-    if up_delay_threshold > down_delay_threshold:
-        return {"score" : 999, "thresholds_valid" : False}
+    thresholds_valid = float(down_delay_threshold - up_delay_threshold)
+    if thresholds_valid < 0.:
+        return {"score" : 999, "thresholds_valid" : thresholds_valid}
 
     scores = []
     for run_id in range(1, len(emulators) + 1):
@@ -42,10 +43,9 @@ def koho_func(up_delay_threshold, up_delay_window_delta, down_delay_threshold, d
         print "semi-normalized power score = %f" % power_score
         scores.append(power_score)
 
-    result = 0. - gmean(scores)
+    result = 100. - gmean(scores)
     print 'Result = %f' % result
-    #time.sleep(np.random.randint(60))
-    return {"score" : result, "thresholds_valid" : True}
+    return {"score" : result, "thresholds_valid" : thresholds_valid}
 
 
 # Write a function like this called 'main'

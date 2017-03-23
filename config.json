@@ -43,5 +43,6 @@
                 "type"        : "CONSTRAINT",
                 "likelihood"  : "NOISELESS"
             }
-        }
+        },
+    "polling-time" : 1
 }
