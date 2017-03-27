@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import re
-from sys import argv
+import sys
 from subprocess import call
 
 emulators = [
@@ -17,18 +17,19 @@ def koho_func(up_delay_threshold, up_delay_window_delta, down_delay_threshold, d
     if thresholds_valid < 0.:
         return {"score" : 999, "thresholds_valid" : thresholds_valid}
 
-    scores = []
     #for run_id in range(1, len(emulators) + 1):
     schemes = ["new_koho", "default_tcp", "vegas", "ledbat", "pcc", "verus", "scream", "sprout", "koho_cc"]
-    cmd = '../pantheon/test/test.py --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" --extra-sender-args "%s" --run-id %d -t 30 new_koho' % (trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], extra_sender_args, run_id)
-    #for scheme in schemes:
+    for scheme in schemes:
         #emulator = emulators[run_id - 1]
-    emulator = emulators[0]
-    trace_dir = '../travis_extras/calibrated_emulators/%s%smbps.trace' % (emulator[0], emulator[1])
-    extra_sender_args = '%f %f %f %f %f' % (up_delay_threshold, up_delay_window_delta, down_delay_threshold, down_delay_window_delta, loss_window_delta)
-    cmd = '../pantheon/test/run.py --schemes "%s" --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" --extra-sender-args "%s" --run-id %d -t 30 new_koho' % (' '.join(schemes), trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], extra_sender_args, run_id)
-    print cmd
-    call(cmd, shell=True)
+        emulator = emulators[0]
+        trace_dir = '../travis_extras/calibrated_emulators/%s%smbps.trace' % (emulator[0], emulator[1])
+        extra_sender_args = '%f %f %f %f %f' % (up_delay_threshold, up_delay_window_delta, down_delay_threshold, down_delay_window_delta, loss_window_delta)
+        cmd = '../pantheon/test/test.py --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" %s' % (trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], scheme)
+        if scheme is "new_koho":
+            cmd += ' --extra-sender-args "%s"' % extra_sender_args
+
+        print cmd
+        call(cmd, shell=True)
 
 if __name__ == '__main__':
-    koho_func(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    koho_func(float(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]))
