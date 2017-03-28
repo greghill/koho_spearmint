@@ -17,14 +17,13 @@ def koho_func(up_delay_threshold, up_delay_window_delta, down_delay_threshold, d
         return {"score" : 999, "thresholds_valid" : thresholds_valid}
 
     scores = []
-    for run_id in range(1, len(emulators) + 1):
-        emulator = emulators[run_id - 1]
+    for emulator in emulators:
         trace_dir = '../travis_extras/calibrated_emulators/%s%smbps.trace' % (emulator[0], emulator[1])
         extra_sender_args = '%f %f %f %f %f' % (up_delay_threshold, up_delay_window_delta, down_delay_threshold, down_delay_window_delta, loss_window_delta)
-        cmd = '../pantheon/test/test.py --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" --extra-sender-args "%s" --run-id %d -t 30 new_koho' % (trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], extra_sender_args, run_id)
+        cmd = '../pantheon/test/test.py --uplink-trace %s --downlink-trace %s --prepend-mm-cmds "mm-delay %s mm-loss uplink %s mm-loss downlink %s" --extra-mm-link-args "--uplink-queue=droptail --uplink-queue-args=packets=%s" --extra-sender-args "%s" --run-times 3 -t 30 new_koho' % (trace_dir, trace_dir, emulator[2], emulator[4], emulator[5], emulator[3], extra_sender_args)
         print cmd
         call(cmd, shell=True)
-        log_path = '~/pantheon/test/new_koho_datalink_run%d.log' % run_id
+        log_path = '~/pantheon/test/new_koho_datalink_run1.log'
         cmd = '~/pantheon/analyze/tunnel_graph.py 500 %s' % log_path
         print cmd
         output = check_output(cmd, shell=True, stderr=STDOUT)
